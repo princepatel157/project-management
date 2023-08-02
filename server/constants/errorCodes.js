@@ -1,0 +1,8 @@
+exports.SERVER_ERR0R = 500;
+exports.INVALID_REQUEST = 400;
+exports.INVALID_CREDENTIALS = 401;
+exports.USER_ALREADY_EXISTS = 409;
+exports.ACCESS_DENIED = 403;
+exports.NOT_FOUND = 404;
+exports.REQUIRED_FIELD = 401;
+exports.SUCCESS = 200;
