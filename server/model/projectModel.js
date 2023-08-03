@@ -2,7 +2,22 @@ const { NOT_FOUND } = require("../constants/errorCodes");
 const AppError = require("../utils/AppError");
 
 let projectsData = [
-  
+  {
+    "project_id": 1,
+    "project_name": "Test Project 1",
+    "tasks": [
+      {
+        task_id : 1,
+        task_name: 'task 1',
+        status:'new'
+      },
+      {
+        task_id : 2,
+        task_name: 'task 2',
+        status:'assigned'
+      }
+    ]
+  },
 ]
 
 

@@ -1,0 +1,32 @@
+.main-card{
+  background-color: gray;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.action-btn{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
+  padding: 8px;
+
+}
+.action-btn button{
+  font-size: 18px;
+  /* display: flex; */
+  /* min-width: 5px; */
+
+}
+.del-icon{
+  color: red;
+  display: flex;
+}
+
+.main-card .task-body {
+  word-wrap: break-word;
+}
