@@ -1,11 +1,17 @@
 .main-card{
-  background-color: gray;
+  /* background-color: gray; */
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
+
+.card-content .task-head{
+  font-weight: 600;
+  margin-bottom: 5px;
+}
 
 .action-btn{
   display: flex;
@@ -29,4 +35,19 @@
 
 .main-card .task-body {
   word-wrap: break-word;
+}
+
+
+/* edit del btn */
+.main-card .edit-col{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+}
+.edit-col .icon{
+  display: flex;
+  background-color: white;
+  font-size: 15px;
 }

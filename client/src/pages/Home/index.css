@@ -38,6 +38,7 @@
 .home-page .task-sec{
   width: 100%;
   margin-top: 20px;
+  position: relative;
 }
 
 .task-sec .task-data{
@@ -103,6 +104,39 @@
   font-size: 22px;
   margin-left: 5px;
 }
+
+/* update task */
+.task-sec .update-task-sec{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.2);
+  width: 100%;
+  height: 100%;
+}
+.update-task-sec .update-fields{
+  display: flex;
+  flex-direction: column;
+  /* position: relative; */
+}
+.update-fields input{
+  height: 30px;
+}
+
+.close-btn-sec{
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 20px;
+}
+.close-btn-sec .close-icon{
+  font-size: 30px;
+}
+
+
+
+
 
 /* -------------media queries------------ */
 @media screen and (min-width:1200px) {

@@ -16,6 +16,23 @@ exports.createProjectValidator=(req,res,next)=>{
   }
 }
 
+exports.updateProjectValidator=(req,res,next)=>{
+  const schema = Joi.object({
+    project_id: Joi.required(),
+    project_name: Joi.string().required().messages({
+      'string.empty':'Project Name Required'
+    }),
+  });
+  
+  const {error} = schema.validate(req.body);
+  if(error){
+    res.status(422).send({message:error.details[0].message});
+  }
+  else{
+    next();
+  }
+}
+
 exports.deleteProjectValidator=(req,res,next)=>{
   const schema = Joi.object({
     project_id: Joi.string().required()
@@ -34,6 +51,7 @@ exports.createTaskValidator=(req,res,next)=>{
   const schema = Joi.object({
     project_id: Joi.required(),
     task_name: Joi.string().required(),
+    description: Joi.string().required(),
     status: Joi.string().required()
   });
   
@@ -51,6 +69,7 @@ exports.updateTaskValidator=(req,res,next)=>{
     project_id: Joi.required(),
     task_id: Joi.required(),
     task_name: Joi.string().required(),
+    description: Joi.string().required(),
     status: Joi.string().required()
   });
   

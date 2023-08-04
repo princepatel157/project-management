@@ -26,6 +26,25 @@ exports.createProject = catchAsyncErrors( async(req,res)=>{
   }
 })
 
+//  update project
+exports.updateProject = catchAsyncErrors( async(req,res)=>{
+  const apiReference = {
+    module: apiReferenceModule,
+    api: "updateProject"
+  }
+  logging.log(apiReference,{EVENT : "REQUEST RECEIVED", REQUEST_BODY: req.body});
+
+  let { project_id, project_name } = req.body;
+
+  let createRes = projectModel.updateProject(parseInt(project_id), project_name);
+  if(createRes){
+    return res.status(200).json({message:"success",projects:createRes})
+  }
+  else{
+    throw new AppError('Something Went Wrong',SERVER_ERR0R);
+  }
+})
+
 
 // delete project
 exports.deleteProject = catchAsyncErrors(async(req,res)=>{
@@ -63,8 +82,8 @@ exports.createTask = catchAsyncErrors(async(req,res)=>{
   logging.log(apiReference,{EVENT : "REQUEST RECEIVED", REQUEST_BODY: req.body});
 
 
-  let { project_id, task_name, status } = req.body;
-  let createRes = projectModel.createTask({project_id,task_name,status});
+  let { project_id, task_name, description, status } = req.body;
+  let createRes = projectModel.createTask({project_id,task_name,description,status});
   if(createRes){
     return res.status(200).json({message:"success",projects:createRes})
   }
@@ -81,8 +100,8 @@ exports.updateTask = catchAsyncErrors(async(req,res)=>{
   }
   logging.log(apiReference,{EVENT : "REQUEST RECEIVED", REQUEST_BODY: req.body});
 
-  let {project_id,task_id,task_name,status} = req.body;
-  let updateRes = projectModel.updateTask({project_id,task_id,task_name,status})
+  let {project_id,task_id,task_name,description,status} = req.body;
+  let updateRes = projectModel.updateTask({project_id,task_id,task_name,description,status})
   if(updateRes){
     return res.status(200).json({message:"success",projects:updateRes})
   }

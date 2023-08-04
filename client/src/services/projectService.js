@@ -5,6 +5,10 @@ const addNewProjectService = async (data) => {
   const res = await axios.post(`${BASE_URL}/createProject`, data,{withCredentials:true});
   return res;
 }
+const updateProjectService = async (data) => {
+  const res = await axios.put(`${BASE_URL}/updateProject`, data,{withCredentials:true});
+  return res;
+}
 
 const getProjectService = async () => {
   const res = await axios.get(`${BASE_URL}/getProjects`,{withCredentials:true});
@@ -24,7 +28,7 @@ const addNewTaskService = async (data) => {
 }
 
 const updateTaskService = async (data) => {
-  const res = await axios.post(`${BASE_URL}/updateTask`, data,{withCredentials:true});
+  const res = await axios.put(`${BASE_URL}/updateTask`, data,{withCredentials:true});
   return res;
 }
 const deleteTaskService = async (data) => {
@@ -38,5 +42,6 @@ export {
   addNewTaskService,
   updateTaskService,
   deleteTaskService,
-  deleteProjectService
+  deleteProjectService,
+  updateProjectService
 }

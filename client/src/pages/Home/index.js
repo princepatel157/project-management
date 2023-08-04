@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import './index.css'
 import BasicCard from '../../components/Card';
-import { addNewProjectService, addNewTaskService, deleteProjectService, getProjectService, updateTaskService, deleteTaskService } from '../../services/projectService';
+import { addNewProjectService, updateProjectService, addNewTaskService, deleteProjectService, getProjectService, updateTaskService, deleteTaskService } from '../../services/projectService';
 import Button from '@mui/material/Button';
 import { MdAddBox } from "react-icons/md";
 import { taskStatus } from '../../constants/taskStatus';
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdMode, MdClose } from "react-icons/md";
 
 
 
@@ -42,6 +42,9 @@ const Home = () => {
   // new project state
   const [newProjectName,setNewProjectName] = useState("");
   const [addNewProject,setAddNewProject] = useState(0);
+
+  const [editProject,setEditProject] = useState(0);
+
   const [allProjects, setAllProjects] = useState([]);
 
   // active state
@@ -51,6 +54,15 @@ const Home = () => {
   // add new task
   const [addNewTask,setAddNewTask] = useState(0);
   const [newTaskName,setNewTaskName] = useState("")
+  const [newTaskDesctiption,setNewTaskDescription] = useState("");
+  const [editTask,setEditTask] = useState(0);
+
+  const [reload, setReload] = useState(false);
+  const reloadEffect = () => {
+    setReload(!reload);
+  };
+
+  console.log('edit task---',allProjects);
 
 
   // get all project api call
@@ -66,10 +78,17 @@ const Home = () => {
   // add new project api call
   const addProject= async() =>{
     try{
-      const res = await addNewProjectService({"project_name": newProjectName});
+      let res;
+      if(editProject){
+        res = await updateProjectService({"project_id":activeProject,"project_name": newProjectName});
+        setEditProject(0)
+      }
+      else{
+        res = await addNewProjectService({"project_name": newProjectName});
+        setAddNewProject(0)
+      }
       setAllProjects(res.data.projects);
       setActiveProject(res.data.projects[res.data.projects.length-1].project_id)
-      setAddNewProject(0)
     }catch(err){
       console.log('addProject err---',err);
       if(err.response.data){
@@ -81,9 +100,18 @@ const Home = () => {
   // add new task api call
   const addTask= async() =>{
     try{
-      const res = await addNewTaskService({project_id: parseInt(activeProject),"task_name": newTaskName, status: "new"});
-      setAllProjects(res.data.projects);
+      let res;
+      if(editTask){
+        res = await updateTaskService({"project_id": parseInt(activeProject), "task_id":editTask.task_id, "task_name": newTaskName, "description": newTaskDesctiption, status: editTask.status});
+        setEditTask(0);
+      }
+      else{
+        res = await addNewTaskService({"project_id": parseInt(activeProject),"task_name": newTaskName, "description": newTaskDesctiption, status: "new"});
+      }
+      setNewTaskDescription("")
       setNewTaskName("")
+      setAllProjects(res.data.projects);
+      setActiveProject(activeProject)
     }catch(err){
       console.log('addTask err---',err);
       if(err.response.data){
@@ -96,14 +124,16 @@ const Home = () => {
   const updateTask= async(trigger,task_id) =>{
     let newTaskName;
     let newStatus;
+    let newDescription;
     for(let i=0;i<activeTasks.length;i++){
       if(activeTasks[i].task_id == task_id){
         newTaskName = activeTasks[i].task_name;
+        newDescription = activeTasks[i].description;
         newStatus= changeStatus(trigger,activeTasks[i].status)
       }
     }
     try{
-      const res = await updateTaskService({project_id: parseInt(activeProject), task_id: task_id, task_name: newTaskName, status: newStatus});
+      const res = await updateTaskService({project_id: parseInt(activeProject), task_id: task_id, task_name: newTaskName, description: newDescription, status: newStatus});
       setAllProjects(res.data.projects);
     }catch(err){
       console.log('updateTask err---',err);
@@ -128,13 +158,26 @@ const Home = () => {
     }
   }
 
+  // edit task
+  const editUpdateTask=async(task)=>{
+    setEditTask(task);
+    setNewTaskName(task.task_name);
+    setNewTaskDescription(task.description)
+  }
+
   // delete project api call
   const deleteProject= async(project_id) =>{
     if(window.confirm(`Confirm to Delete Project`)){
       try{
         const res = await deleteProjectService({project_id: parseInt(project_id)});
         setAllProjects(res.data.projects);
-        setActiveProject(allProjects[allProjects.length-1].project_id)
+        if(res.data.projects.length>0){
+          setActiveProject(allProjects[allProjects.length-1].project_id)
+        }
+        else{
+          setActiveProject(1);
+          setActiveTasks([])
+        }
       }catch(err){
         console.log('deleteProject err---',err);
         if(err.response.data){
@@ -142,6 +185,17 @@ const Home = () => {
         }
       }
     }
+  }
+
+  const handleEditProject=(e)=>{
+    e.preventDefault();
+    setEditProject(1)
+    for(let i=0;i<allProjects.length;i++){
+      if(allProjects[i].project_id === activeProject){
+        setNewProjectName(allProjects[i].project_name)
+      }
+    }
+
   }
   
   // change active project effect
@@ -155,13 +209,15 @@ const Home = () => {
       }
     }
   
-    allProjects.length && changeActiveTasks();
-  },[allProjects,activeProject]);
+    changeActiveTasks();
+  },[allProjects,activeProject, reload,editTask]);
   
   // fetch all project effect
   useEffect(()=>{
     fetchProjects();
   },[]);
+
+
 
 
 
@@ -185,12 +241,22 @@ const Home = () => {
 
             <button onClick={(e)=>setAddNewProject(1)}>Add New</button>
             <span className='delete-project-btn'><MdDelete className='delete-icon' onClick={()=>deleteProject(activeProject)}/></span>
+            <span className='delete-project-btn'><MdMode className='delete-icon' onClick={handleEditProject}/></span>
           </div>
           {
             addNewProject?
             <div className='add-project'>
               <input value={newProjectName} onChange={(e)=>setNewProjectName(e.target.value)} type='text' placeholder='Enter Project Name'/>
               <button onClick={addProject}>Add</button>
+            </div>
+            : 
+            ""
+          }
+          {
+            editProject?
+            <div className='add-project'>
+              <input value={newProjectName} onChange={(e)=>setNewProjectName(e.target.value)} type='text' placeholder='Enter Project Name'/>
+              <button onClick={addProject}>Update</button>
             </div>
             : 
             ""
@@ -212,9 +278,9 @@ const Home = () => {
                     if(data.status === taskStatus.NEW){
                       return (
 
-                        <button key={index}>
-                          <BasicCard tasks={data} trigger={updateTask}/>
-                        </button>
+                        <div key={index}>
+                          <BasicCard tasks={data} trigger={updateTask} deleteTrigger={deleteTask} editTrigger={editUpdateTask}/>
+                        </div>
                       )
                     }
                     else{
@@ -223,14 +289,16 @@ const Home = () => {
                   })
                 }
                 
-                {/* new edit task */}
+                {/* new add task */}
                 { addNewTask ?
                 <div className='new-task'>
                   <input type='text' value={newTaskName} onChange={(e)=>setNewTaskName(e.target.value)} placeholder='enter task name'/>
+                  <input type='text' value={newTaskDesctiption} onChange={(e)=>setNewTaskDescription(e.target.value)} placeholder='enter task description'/>
                   <Button onClick={addTask} variant="contained">Save Task</Button>
                 </div>
                 : ""
                 }
+                {/* edit task */}
                 <div className='add-task-btn'>
                   <MdAddBox className={'add-task-icon'} onClick={(e)=>setAddNewTask(1)}/>
                 </div>
@@ -247,9 +315,9 @@ const Home = () => {
                   activeTasks.map((data,index)=>{
                     if(data.status === taskStatus.ASSIGNED){
                       return (
-                        <button key={index}>
-                          <BasicCard tasks={data} trigger={updateTask}/>
-                        </button>
+                        <div key={index}>
+                          <BasicCard tasks={data} trigger={updateTask} deleteTrigger={deleteTask} editTrigger={editUpdateTask}/>
+                        </div>
                       )
                     }
                     else{
@@ -270,9 +338,9 @@ const Home = () => {
                   activeTasks.map((data,index)=>{
                     if(data.status === taskStatus.IN_PROGRESS){
                       return (
-                        <button key={index}>
-                          <BasicCard tasks={data} trigger={updateTask}/>
-                        </button>
+                        <div key={index}>
+                          <BasicCard tasks={data} trigger={updateTask} deleteTrigger={deleteTask} editTrigger={editUpdateTask}/>
+                        </div>
                       )
                     }
                     else{
@@ -293,9 +361,9 @@ const Home = () => {
                   activeTasks.map((data,index)=>{
                     if(data.status === taskStatus.COMPLETED){
                       return (
-                        <button key={index}>
-                          <BasicCard tasks={data} trigger={updateTask} deleteTrigger={deleteTask}/>
-                        </button>
+                        <div key={index}>
+                          <BasicCard tasks={data} trigger={updateTask} deleteTrigger={deleteTask} editTrigger={editUpdateTask}/>
+                        </div>
                       )
                     }
                     else{
@@ -305,7 +373,19 @@ const Home = () => {
                 }
               </div>
             </div>
-          </div>'
+            {/* update popup */}
+            {
+              editTask ?
+            <div className='update-task-sec'>
+              <div className='update-fields'>
+                <input type='text' value={newTaskName} onChange={(e)=>setNewTaskName(e.target.value)} placeholder='enter task name'/>
+                <input type='text' value={newTaskDesctiption} onChange={(e)=>setNewTaskDescription(e.target.value)} placeholder='enter task description'/>
+                <Button onClick={addTask} variant="contained">Update Task</Button>
+              </div>
+              <div className='close-btn-sec'><MdClose onClick={()=>setEditTask(0)} className='close-icon'/></div>
+            </div> : ""
+            }
+          </div>
         </div>
       </div>
     </>
