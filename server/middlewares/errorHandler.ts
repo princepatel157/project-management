@@ -1,6 +1,6 @@
-const AppError = require('../utils/AppError');
+import AppError from '../utils/AppError';
 
-const errorHandler = (error,req,res,next)=>{
+export const errorHandler = (error: any,req: any,res: any,next: any)=>{
 
   if(error instanceof AppError){
     return res.status(error.statusCode).json({
@@ -10,6 +10,3 @@ const errorHandler = (error,req,res,next)=>{
   console.log('server-error---',error)
   res.status(500).json({message:"Server Error"});
 }
-
-
-module.exports = errorHandler;

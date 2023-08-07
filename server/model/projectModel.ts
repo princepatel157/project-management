@@ -1,5 +1,5 @@
-const { NOT_FOUND } = require("../constants/errorCodes");
-const AppError = require("../utils/AppError");
+import {Errors} from "../constants/errorCodes";
+import AppError from "../utils/AppError";
 
 let projectsData = [
   {
@@ -25,7 +25,7 @@ let projectsData = [
 
 
 
-exports.createNewProject = (project_name)=>{
+const createNewProject = (project_name: string)=>{
     let newId = 1;
     if(!projectsData){
       throw new Error(
@@ -45,7 +45,7 @@ exports.createNewProject = (project_name)=>{
 }
 
 // update project
-exports.updateProject = (project_id, project_name)=>{
+const updateProject = (project_id: number, project_name: string)=>{
     let newId = 1;
     if(!projectsData){
       throw new Error(
@@ -62,7 +62,7 @@ exports.updateProject = (project_id, project_name)=>{
 }
 
 // delete project
-exports.deleteProject = ({project_id})=>{
+const deleteProject = (project_id: number)=>{
   for(let i=0;i<projectsData.length;i++){
     if(projectsData[i].project_id === project_id){
       projectsData = projectsData.filter((item => item.project_id !== project_id))
@@ -70,7 +70,7 @@ exports.deleteProject = ({project_id})=>{
     }
     else{
       if(projectsData[i].project_id === projectsData[projectsData.length-1].project_id){
-        throw new AppError('Project not found', NOT_FOUND)
+        throw new AppError('Project not found', Errors.NOT_FOUND)
       }
     }
   }
@@ -78,7 +78,7 @@ exports.deleteProject = ({project_id})=>{
 
 
 
-exports.getProjects = ()=>{
+const getProjects = ()=>{
     if(projectsData){
       return projectsData;
     }
@@ -95,7 +95,7 @@ exports.getProjects = ()=>{
 //   }
 // }
 
-exports.createTask = ({project_id,task_name,description,status}) =>{
+const createTask = (project_id: number,task_name: string,description: string,status:string) =>{
   let taskId = 1;
   for(let i=0;i<projectsData.length;i++){
     if(projectsData[i].project_id === project_id){
@@ -121,7 +121,7 @@ exports.createTask = ({project_id,task_name,description,status}) =>{
   }
 }
 
-exports.updateTask = ({project_id,task_id,task_name,description,status}) => {
+const updateTask = (project_id: number,task_id: number,task_name: string,description: string,status:string) => {
   for(let i=0;i<projectsData.length;i++){
     if(projectsData[i].project_id === project_id){
       for(let j=0;j<projectsData[i].tasks.length;j++){
@@ -134,20 +134,20 @@ exports.updateTask = ({project_id,task_id,task_name,description,status}) => {
         }
         else{
           if(projectsData[i].tasks[j].task_id === projectsData[i].tasks[projectsData[i].tasks.length-1].task_id){
-            throw new AppError("Task not Found", NOT_FOUND)
+            throw new AppError("Task not Found", Errors.NOT_FOUND)
           }
         }
       }
     }
     else{
       if(projectsData[i].project_id === projectsData[projectsData.length-1].project_id){
-        throw new AppError('Project not found', NOT_FOUND)
+        throw new AppError('Project not found', Errors.NOT_FOUND)
       }
     }
   }
 }
 
-exports.deleteTask = ({project_id,task_id})=>{
+const deleteTask = (project_id: number,task_id:number)=>{
   for(let i=0;i<projectsData.length;i++){
     if(projectsData[i].project_id === project_id){
       for(let j=0;j<projectsData[i].tasks.length;j++){
@@ -157,15 +157,17 @@ exports.deleteTask = ({project_id,task_id})=>{
         }
         else{
           if(projectsData[i].tasks[j].task_id === projectsData[i].tasks[projectsData[i].tasks.length-1].task_id){
-            throw new AppError('Task not found', NOT_FOUND)
+            throw new AppError('Task not found', Errors.NOT_FOUND)
           }
         }
       }
     }
     else{
       if(projectsData[i].project_id === projectsData[projectsData.length-1].project_id){
-        throw new AppError('Project not found', NOT_FOUND)
+        throw new AppError('Project not found', Errors.NOT_FOUND)
       }
     }
   }
 }
+
+export { createNewProject, updateProject,deleteProject, getProjects, createTask, updateTask,deleteTask }

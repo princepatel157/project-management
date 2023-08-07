@@ -2,7 +2,7 @@ const moment = require('moment');
 
 const logs_enabled = process.env.LOG_ENABLED || false;
 
-const log = (apiReference,log)=>{
+const log = (apiReference: any,log: any)=>{
   if(logs_enabled){
     try{
       log= JSON.stringify(log);
@@ -15,4 +15,4 @@ const log = (apiReference,log)=>{
   }
 }
 
-exports.log = log;
+export default log;

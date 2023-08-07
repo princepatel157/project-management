@@ -1,6 +1,6 @@
-const Joi = require("joi");
+import Joi from "joi";
 
-exports.createProjectValidator=(req,res,next)=>{
+const createProjectValidator=(req:any,res:any,next:any)=>{
   const schema = Joi.object({
     project_name: Joi.string().required().messages({
       'string.empty':'Project Name Required'
@@ -16,7 +16,7 @@ exports.createProjectValidator=(req,res,next)=>{
   }
 }
 
-exports.updateProjectValidator=(req,res,next)=>{
+const updateProjectValidator=(req:any,res:any,next:any)=>{
   const schema = Joi.object({
     project_id: Joi.required(),
     project_name: Joi.string().required().messages({
@@ -33,7 +33,7 @@ exports.updateProjectValidator=(req,res,next)=>{
   }
 }
 
-exports.deleteProjectValidator=(req,res,next)=>{
+const deleteProjectValidator=(req:any,res:any,next:any)=>{
   const schema = Joi.object({
     project_id: Joi.string().required()
   });
@@ -47,7 +47,7 @@ exports.deleteProjectValidator=(req,res,next)=>{
   }
 }
 
-exports.createTaskValidator=(req,res,next)=>{
+const createTaskValidator=(req:any,res:any,next:any)=>{
   const schema = Joi.object({
     project_id: Joi.required(),
     task_name: Joi.string().required(),
@@ -64,7 +64,7 @@ exports.createTaskValidator=(req,res,next)=>{
   }
 }
 
-exports.updateTaskValidator=(req,res,next)=>{
+const updateTaskValidator=(req:any,res:any,next:any)=>{
   const schema = Joi.object({
     project_id: Joi.required(),
     task_id: Joi.required(),
@@ -82,7 +82,7 @@ exports.updateTaskValidator=(req,res,next)=>{
   }
 }
 
-exports.deleteTaskValidator=(req,res,next)=>{
+const deleteTaskValidator=(req:any,res:any,next:any)=>{
   const schema = Joi.object({
     project_id: Joi.required(),
     task_id: Joi.required()
@@ -96,3 +96,6 @@ exports.deleteTaskValidator=(req,res,next)=>{
     next();
   }
 }
+
+
+export {createProjectValidator,updateProjectValidator,deleteProjectValidator,createTaskValidator,updateTaskValidator,deleteTaskValidator}
